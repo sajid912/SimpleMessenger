@@ -34,6 +34,8 @@ import android.widget.TextView;
  * @author stevko
  *
  */
+
+// Edited by sajid
 public class SimpleMessengerActivity extends Activity {
     static final String TAG = SimpleMessengerActivity.class.getSimpleName();
     static final String REMOTE_PORT0 = "11108";
