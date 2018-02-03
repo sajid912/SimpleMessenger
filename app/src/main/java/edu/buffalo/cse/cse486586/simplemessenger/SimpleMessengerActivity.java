@@ -1,7 +1,11 @@
 package edu.buffalo.cse.cse486586.simplemessenger;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -153,12 +157,28 @@ public class SimpleMessengerActivity extends Activity {
         @Override
         protected Void doInBackground(ServerSocket... sockets) {
             ServerSocket serverSocket = sockets[0];
-            
+            String message;
             /*
              * TODO: Fill in your server code that receives messages and passes them
              * to onProgressUpdate().
              */
-            return null;
+            Log.d(TAG, "Server task");
+            while(true)
+            {
+                try {
+                    Socket socket = serverSocket.accept();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    message = bufferedReader.readLine();
+                    publishProgress(message);
+
+                    bufferedReader.close();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            //return null;
         }
 
         protected void onProgressUpdate(String...strings) {
@@ -207,6 +227,8 @@ public class SimpleMessengerActivity extends Activity {
         @Override
         protected Void doInBackground(String... msgs) {
             try {
+
+                Log.d(TAG, "Server task");
                 String remotePort = REMOTE_PORT0;
                 if (msgs[1].equals(REMOTE_PORT0))
                     remotePort = REMOTE_PORT1;
@@ -215,9 +237,16 @@ public class SimpleMessengerActivity extends Activity {
                         Integer.parseInt(remotePort));
                 
                 String msgToSend = msgs[0];
+                Log.d(TAG, "Msg to send:"+msgToSend);
                 /*
                  * TODO: Fill in your client code that sends out a message.
                  */
+
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+                bufferedWriter.write(msgToSend);
+
+                bufferedWriter.flush();
+                bufferedWriter.close();
                 socket.close();
             } catch (UnknownHostException e) {
                 Log.e(TAG, "ClientTask UnknownHostException");
